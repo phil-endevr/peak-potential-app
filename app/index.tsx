@@ -10,7 +10,10 @@ export default function App() {
       <StatusBar style="light" />
 
       <SafeAreaView style={styles.safeArea}>
-        <WebView source={{ uri: "https://peakpotential.world/app/sign-in" }} />
+        <WebView
+          source={{ uri: "https://peakpotential.world/app/sign-in" }}
+          allowsFullscreenVideo={true}
+        />
       </SafeAreaView>
     </View>
   );
