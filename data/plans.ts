@@ -1,11 +1,9 @@
 const plans = [
   {
-    id: "789",
+    id: "testing_water_monthly",
     title: "Testing The Water",
     price: "£9.99",
     originalPrice: "£19.99",
-    stripePriceId: "price_1QEdfzRvLMgi17zs17d9MfoB",
-    testPriceId: "price_1Pty4KRvLMgi17zsBG4weVHq",
     features: [
       "Access to all of our E-Books",
       "Masterclasses & Video Courses",
@@ -13,12 +11,10 @@ const plans = [
     ],
   },
   {
-    id: "456",
+    id: "take_over_monthly",
     title: "Take Over Time",
     price: "£79.99",
     originalPrice: "£149.99",
-    stripePriceId: "price_1QEdhsRvLMgi17zs7U2HWFNX",
-    testPriceId: "price_1PtxssRvLMgi17zsmkN8xmD3",
     features: [
       "Access to all of our E-Books",
       "Masterclasses & Video Courses",
@@ -34,12 +30,10 @@ const plans = [
     recommended: true,
   },
   {
-    id: "123",
+    id: "make_moves_monthly",
     title: "Make Moves",
     price: "£19.99",
     originalPrice: "£44.99",
-    stripePriceId: "price_1QEdghRvLMgi17zsrZRG4nHh",
-    testPriceId: "price_1Pty3ARvLMgi17zseGgWhQt1",
     features: [
       "Access to all of our E-Books",
       "Masterclasses & Video Courses",

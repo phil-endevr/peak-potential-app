@@ -1,4 +1,4 @@
-import AppleSignUpModal from "@/components/AppleSignUpModal";
+import AppleSignUpModal from "@/components/appleSignup/AppleSignUpModal";
 import WebviewApp from "@/components/WebviewApp";
 import Constants from "expo-constants";
 import { StatusBar } from "expo-status-bar";
