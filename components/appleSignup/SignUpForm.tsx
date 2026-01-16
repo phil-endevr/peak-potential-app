@@ -1,6 +1,7 @@
 import HttpClient from "@/clients/httpClient";
 import brandColors from "@/constants/colors";
 import { mockOfferings } from "@/data/mockOfferings";
+import { randomUUID } from "expo-crypto";
 import React, { useEffect, useState } from "react";
 import { Button, Image, Text, TextInput, View } from "react-native";
 import Purchases, {
@@ -49,13 +50,22 @@ const SignUpForm = ({
     }
   }, [packageId, offerings, isUsingMockData]);
 
+  const handleDeleteUser = async (userId: string) => {
+    try {
+      const response = await apiClient.delete(`/auth/ios/deleteUser/${userId}`);
+      console.log("User deletion response:", response);
+    } catch (error) {
+      console.log("Error deleting user:", error);
+    }
+  };
+
   const handleSubmit = async () => {
     setError(null);
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
-
+    const newId = randomUUID();
     try {
       const response = await apiClient.post("/auth/ios/addUser", {
         email,
@@ -63,24 +73,29 @@ const SignUpForm = ({
         firstName,
         lastName,
         plan: selectedPkg.product.title,
+        id: newId,
       });
 
       if (response.error) {
-        setError(response.error);
+        setError(
+          "There was an error creating your account. Please check your details and try again."
+        );
         return;
       }
 
       if (isUsingMockData) {
         console.log("Mock purchase successful for:", selectedPkg);
       } else {
-        await Purchases.logIn(response?.uid);
+        await Purchases.logIn(newId);
         const purchase = await Purchases.purchasePackage(selectedPkg);
+
         console.log("Purchase successful:", purchase);
       }
 
       setSuccess(true);
     } catch (error) {
       console.log("Signup error:", error);
+      await handleDeleteUser(newId);
       setError("Signup failed. Please try again.");
     }
   };

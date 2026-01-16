@@ -31,4 +31,15 @@ export default class HttpClient {
     });
     return response.json();
   }
+
+  async delete(url: string, headers: Record<string, string> = {}) {
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        ...headers,
+      },
+    });
+    return response.json();
+  }
 }
