@@ -16,14 +16,27 @@ const WebviewApp = () => {
   `;
 
   useEffect(() => {
+    if (Platform.OS !== "ios") {
+      return;
+    }
+
     let purchaseUpdateSub: any;
     let purchaseErrorSub: any;
 
     const initIAP = async () => {
       await RNIap.initConnection();
 
+      // Fetch products but don't block listener setup if it fails
       if (Platform.OS === "ios") {
-        await RNIap.fetchProducts({ skus: iosPlanIds });
+        try {
+          await RNIap.fetchProducts({ skus: iosPlanIds });
+          console.log("✓ Products fetched successfully");
+        } catch (err) {
+          console.warn(
+            "⚠️ Failed to fetch products (purchases may still work):",
+            err,
+          );
+        }
       }
 
       purchaseUpdateSub = RNIap.purchaseUpdatedListener(async (purchase) => {
@@ -47,9 +60,16 @@ const WebviewApp = () => {
 
           const result = await response.json();
 
+          console.log(
+            "Received purchase verification result from backend:",
+            result,
+          );
+
           if (result.success) {
             await RNIap.finishTransaction({ purchase });
-
+            console.log(
+              "Successfully verified purchase with backend and finished transaction",
+            );
             webViewRef.current?.postMessage(
               JSON.stringify({
                 type: "IAP_RESULT",
@@ -57,6 +77,10 @@ const WebviewApp = () => {
               }),
             );
           } else {
+            console.log(
+              "Purchase verification failed on backend",
+              result.error || "Unknown error",
+            );
             webViewRef.current?.postMessage(
               JSON.stringify({
                 type: "IAP_RESULT",
@@ -74,7 +98,8 @@ const WebviewApp = () => {
         }
       });
 
-      purchaseErrorSub = RNIap.purchaseErrorListener(() => {
+      purchaseErrorSub = RNIap.purchaseErrorListener((error) => {
+        console.error("❌ Purchase error:", error);
         webViewRef.current?.postMessage(
           JSON.stringify({
             type: "IAP_RESULT",
@@ -84,7 +109,15 @@ const WebviewApp = () => {
       });
     };
 
-    initIAP();
+    initIAP().catch((err) => {
+      console.error("❌ Failed to initialize IAP connection:", err);
+      webViewRef.current?.postMessage(
+        JSON.stringify({
+          type: "IAP_INIT_ERROR",
+          success: false,
+        }),
+      );
+    });
 
     return () => {
       purchaseUpdateSub?.remove();
@@ -97,16 +130,18 @@ const WebviewApp = () => {
     const data = JSON.parse(event.nativeEvent.data);
 
     if (data.type === "START_IAP" && Platform.OS === "ios") {
+      console.log("🛒 Starting IAP purchase for:", data.productId);
       try {
         await RNIap.requestPurchase({
-          type: "in-app",
+          type: "subs",
           request: {
             apple: {
               sku: data.productId,
             },
           },
         });
-      } catch {
+      } catch (err) {
+        console.error("❌ Purchase request failed:", err);
         webViewRef.current?.postMessage(
           JSON.stringify({
             type: "IAP_RESULT",
