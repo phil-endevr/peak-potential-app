@@ -1,4 +1,4 @@
-export default class HttpClient {
+export default class ApiClient {
   private baseUrl: string;
 
   constructor() {
@@ -19,7 +19,7 @@ export default class HttpClient {
   async post(
     url: string,
     body: Record<string, any>,
-    headers: Record<string, string> = {}
+    headers: Record<string, string> = {},
   ) {
     const response = await fetch(url, {
       method: "POST",
