@@ -7,8 +7,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function App() {
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
-      <SafeAreaView style={styles.safeArea} edges={["left", "right", "bottom"]}>
+      <StatusBar style="light" backgroundColor="#000000" translucent={false} />
+      <SafeAreaView
+        style={styles.safeArea}
+        edges={["top", "left", "right", "bottom"]}
+      >
         <WebviewApp />
       </SafeAreaView>
     </View>
